@@ -39,5 +39,9 @@ swiftc -O \
     Sources/Main.swift \
     -o "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 
-echo "✅ 编译完成！程序已生成至: $APP_BUNDLE"
-echo "🚀 可双击 $APP_BUNDLE 运行或执行 ./run.sh 启动！"
+echo "📦 正在安装至 macOS 应用程序文件夹 (/Applications/LiteStats.app)..."
+rm -rf "/Applications/$APP_NAME.app"
+cp -R "$APP_BUNDLE" "/Applications/$APP_NAME.app"
+
+echo "✅ 编译与安装完成！"
+echo "🚀 您可以通过 Finder -> 应用程序、Spotlight 聚焦搜索 (Cmd + Space 搜索 LiteStats) 或执行 ./run.sh 手动启动！"
