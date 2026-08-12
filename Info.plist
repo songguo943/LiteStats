@@ -4,6 +4,8 @@
 <dict>
     <key>CFBundleExecutable</key>
     <string>LiteStats</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>com.gemini.litestats</string>
     <key>CFBundleName</key>
