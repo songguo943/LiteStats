@@ -11,6 +11,15 @@
 
 ---
 
+## 📸 Screenshots & Showcase
+
+<p align="center">
+  <img src="./assets/litestats_ui_preview.jpg" width="48%" alt="LiteStats UI Dashboard">
+  <img src="./assets/litestats_settings_preview.jpg" width="48%" alt="LiteStats Preferences Panel">
+</p>
+
+---
+
 ## 📌 Background & Motivation
 
 On macOS, system monitoring tools like Stats, iStat Menus, or Electron-based widgets are very popular. However:
@@ -92,6 +101,7 @@ Built directly via Command Line Tools (`swiftc` & `clang`). No Xcode GUI require
 
 ```
 LiteStats/
+├── assets/                      # UI Screenshots & media
 ├── build/
 │   └── LiteStats.app            # Compiled app bundle
 ├── Sources/

@@ -11,6 +11,15 @@
 
 ---
 
+## 📸 运行效果截图与功能展示 (Screenshots)
+
+<p align="center">
+  <img src="./assets/litestats_ui_preview.jpg" width="48%" alt="LiteStats 英文主界面面板">
+  <img src="./assets/litestats_settings_preview.jpg" width="48%" alt="LiteStats 英文偏好设置面板">
+</p>
+
+---
+
 ## 📌 背景与设计初衷 (Background & Motivation)
 
 在 macOS 上，我们经常需要监控 CPU 负载、内存使用和风扇转速。然而，市面上许多知名的监控工具（如 Stats、iStat Menus 或基于 Electron / Webview 的小工具）：
@@ -92,6 +101,7 @@
 
 ```
 LiteStats/
+├── assets/                      # UI 展示截图与媒体文件
 ├── build/
 │   └── LiteStats.app            # 编译生成的打包应用
 ├── Sources/
@@ -116,11 +126,6 @@ LiteStats/
 ## 📜 开源协议与建议 (License Options)
 
 本项目采用 **MIT License**。
-
-### 协议建议说明：
-- **MIT License (推荐)**：极其宽松，允许所有人免费使用、修改、分发及商业化，适合个人开发者开源实用工具。
-- **GPL-3.0**：传染性开源协议，要求衍生作品必须同样开源，适合希望防止代码被闭源商业软件直接包含的项目。
-- **Apache 2.0**：类似 MIT 但包含专利授权条款，适合大型团队项目。
 
 ---
 
