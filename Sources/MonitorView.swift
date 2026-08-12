@@ -17,7 +17,7 @@ struct MonitorView: View {
                     Image(systemName: "cpu.fill")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.cyan)
-                    Text("MacMonitor")
+                    Text("LiteStats")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                 }
                 

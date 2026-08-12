@@ -1,4 +1,4 @@
-# 🚀 MacMonitor - 原生轻量级 macOS CPU / 内存 / 风扇 菜单栏监控工具
+# 🚀 LiteStats - 原生极轻量级 macOS CPU / 内存 / 风扇 菜单栏监控工具
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-macOS%2013.0%2B-blue" alt="Platform">
@@ -18,7 +18,7 @@
 - ❌ **任务栏空间浪费**：横向文本过长，严重挤占 MacBook 刘海屏（Notch）及顶部菜单栏空间。
 - ❌ **发热与续航隐患**：后台轮询效率低下，容易导致轻微发热和电池额外消耗。
 
-**MacMonitor** 由此诞生！旨在打造一款 **真正的原生零负担 (Zero-Bloat)** macOS 常驻监控应用：
+**LiteStats** 由此诞生！旨在打造一款 **真正的原生零负担 (Zero-Bloat)** macOS 常驻监控应用：
 - ⚡ **内存占用低于 37 MB**，**CPU 占用率稳定在 0.0%**（相比同类减少 **99%** 性能开销）。
 - 📐 **上下双层精紧凑排版**（上层 `CPU / RAM / FAN`，下层实时数值），极致节省刘海屏横向空间。
 - 🌀 **原生 C 语言 AppleSMC 硬件对接**，完美支持 MacBook Pro / Air / Mac Studio 等双风扇及静音架构。
@@ -48,7 +48,7 @@
 
 在 M-Series MacBook Pro 上的 10 分钟 (120 次采样) 连续实测结果：
 
-| 性能指标 | MacMonitor 实测数据 | 同类工具 (如 Electron 类) | 优势 |
+| 性能指标 | LiteStats 实测数据 | 同类工具 (如 Electron 类) | 优势 |
 | :--- | :--- | :--- | :--- |
 | **应用包体积** | **656 KB** | ~150 MB - 300 MB | 🟢 小 **99.6%** |
 | **物理内存 (RSS)** | **37 MB** | ~150 MB - 350 MB | 🟢 节省 80%+ 内存 |
@@ -69,8 +69,8 @@
 
 1. 克隆代码仓库：
    ```bash
-   git clone https://github.com/your-username/mac-monitor.git
-   cd mac-monitor
+   git clone https://github.com/your-username/LiteStats.git
+   cd LiteStats
    ```
 
 2. 赋予脚本执行权限并编译：
@@ -78,22 +78,22 @@
    chmod +x build.sh run.sh
    ./build.sh
    ```
-   *编译成功后，应用包将自动生成至 `build/MacMonitor.app`。*
+   *编译成功后，应用包将自动生成至 `build/LiteStats.app`。*
 
 3. 启动应用：
    ```bash
    ./run.sh
    ```
-   *也可以在 Finder 中双击 `build/MacMonitor.app` 或将其拖入 `/Applications` 文件夹随时使用。*
+   *也可以在 Finder 中双击 `build/LiteStats.app` 或将其拖入 `/Applications` 文件夹随时使用。*
 
 ---
 
 ## 📁 项目目录结构
 
 ```
-mac-monitor/
+LiteStats/
 ├── build/
-│   └── MacMonitor.app           # 编译生成的打包应用
+│   └── LiteStats.app            # 编译生成的打包应用
 ├── Sources/
 │   ├── Main.swift              # 程序入口点与 NSApplication 声明
 │   ├── SMCBridge.h             # C 语言 SMC 驱动头文件 (80 字节结构)
@@ -115,7 +115,7 @@ mac-monitor/
 
 ## 📜 开源协议与建议 (License Options)
 
-本项目目前采用 **MIT License**。
+本项目采用 **MIT License**。
 
 ### 协议建议说明：
 - **MIT License (推荐)**：极其宽松，允许所有人免费使用、修改、分发及商业化，适合个人开发者开源实用工具。
@@ -126,4 +126,4 @@ mac-monitor/
 
 ## 🤝 贡献与反馈 (Contributing)
 
-欢迎提交 Issue 和 Pull Request 来完善 MacMonitor！如果你觉得这个工具对你有帮助，欢迎点个 ⭐ Star！
+欢迎提交 Issue 和 Pull Request 来完善 LiteStats！如果你觉得这个工具对你有帮助，欢迎点个 ⭐ Star！

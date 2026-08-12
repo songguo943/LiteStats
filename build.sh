@@ -4,10 +4,10 @@ set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
-echo "🔨 开始编译 MacMonitor (Swift 原生轻量级 CPU/内存/风扇监控程序)..."
+echo "🔨 开始编译 LiteStats (Swift 原生轻量级 CPU/内存/风扇监控程序)..."
 
 SDK_PATH=$(xcrun --show-sdk-path)
-APP_NAME="MacMonitor"
+APP_NAME="LiteStats"
 BUILD_DIR="$DIR/build"
 APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 

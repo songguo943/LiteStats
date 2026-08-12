@@ -1,4 +1,4 @@
-# 🚀 MacMonitor - Native & Ultra-Lightweight macOS Status Bar Monitor
+# 🚀 LiteStats - Native & Ultra-Lightweight macOS Status Bar Monitor
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-macOS%2013.0%2B-blue" alt="Platform">
@@ -18,7 +18,7 @@ On macOS, system monitoring tools like Stats, iStat Menus, or Electron-based wid
 - ❌ **Menu Bar Waste**: Long horizontal text strings crowd out the macOS notch area and other menu items.
 - ❌ **Overhead**: Inefficient polling loops drain laptop battery unnecessary.
 
-**MacMonitor** was created to solve these exact pain points as a **Zero-Bloat, Pure Native** system monitor:
+**LiteStats** was created to solve these exact pain points as a **Zero-Bloat, Pure Native** system monitor:
 - ⚡ Uses **only ~37 MB RAM** and **~0.0% CPU** (a **99% reduction** in resource overhead compared to Electron alternatives).
 - 📐 Features a **2-line stacked vertical menu bar layout** (`CPU / RAM / FAN` on top, live values below), saving >60% horizontal notch space.
 - 🌀 Direct C-bridge to AppleSMC hardware for dual-fan RPM readings on MacBook Pro/Air/Mac Studio.
@@ -48,7 +48,7 @@ On macOS, system monitoring tools like Stats, iStat Menus, or Electron-based wid
 
 Sampled over 10 minutes (120 consecutive real-time samples) on an M-Series MacBook Pro:
 
-| Metric | MacMonitor | Electron Alternatives | Advantage |
+| Metric | LiteStats | Electron Alternatives | Advantage |
 | :--- | :--- | :--- | :--- |
 | **App Bundle Size** | **656 KB** | ~150 MB - 300 MB | 🟢 **99.6% smaller** |
 | **Memory Footprint (RSS)** | **37 MB** | ~150 MB - 350 MB | 🟢 **80%+ less RAM** |
@@ -69,8 +69,8 @@ Built directly via Command Line Tools (`swiftc` & `clang`). No Xcode GUI require
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/mac-monitor.git
-   cd mac-monitor
+   git clone https://github.com/your-username/LiteStats.git
+   cd LiteStats
    ```
 
 2. Make scripts executable and build:
@@ -78,22 +78,22 @@ Built directly via Command Line Tools (`swiftc` & `clang`). No Xcode GUI require
    chmod +x build.sh run.sh
    ./build.sh
    ```
-   *The built application bundle will be created at `build/MacMonitor.app`.*
+   *The built application bundle will be created at `build/LiteStats.app`.*
 
 3. Launch the app:
    ```bash
    ./run.sh
    ```
-   *You can also double-click `build/MacMonitor.app` in Finder or drag it into `/Applications`.*
+   *You can also double-click `build/LiteStats.app` in Finder or drag it into `/Applications`.*
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-mac-monitor/
+LiteStats/
 ├── build/
-│   └── MacMonitor.app           # Compiled app bundle
+│   └── LiteStats.app            # Compiled app bundle
 ├── Sources/
 │   ├── Main.swift              # Main entry point & NSApplication delegate
 │   ├── SMCBridge.h             # C SMC driver header (80-byte struct)
@@ -117,13 +117,8 @@ mac-monitor/
 
 This project is licensed under the **MIT License**.
 
-### License Options Explanation:
-- **MIT License (Recommended)**: Highly permissive. Allows anyone to use, modify, distribute, and commercialize the code freely. Ideal for personal open-source developer tools.
-- **GPL-3.0**: Copyleft license requiring derivative works to remain open source.
-- **Apache 2.0**: Permissive with explicit patent rights grants.
-
 ---
 
 ## 🤝 Contributing
 
-Contributions, Issues, and Feature Requests are welcome! Feel free to leave a ⭐ Star if you find MacMonitor useful!
+Contributions, Issues, and Feature Requests are welcome! Feel free to leave a ⭐ Star if you find LiteStats useful!
