@@ -31,7 +31,7 @@ struct MonitorView: View {
                         .font(.system(size: 11, weight: .medium))
                 }
                 .buttonStyle(.plain)
-                .help("立即刷新")
+                .help("Refresh")
                 
                 Button(action: { showSettings.toggle() }) {
                     Image(systemName: "gearshape.fill")
@@ -39,7 +39,7 @@ struct MonitorView: View {
                         .foregroundColor(showSettings ? .accentColor : .primary)
                 }
                 .buttonStyle(.plain)
-                .help("偏好设置")
+                .help("Preferences")
                 
                 Button(action: { NSApplication.shared.terminate(nil) }) {
                     Image(systemName: "power")
@@ -47,7 +47,7 @@ struct MonitorView: View {
                         .foregroundColor(.red.opacity(0.8))
                 }
                 .buttonStyle(.plain)
-                .help("退出程序")
+                .help("Quit App")
             }
             .padding(.horizontal, 12)
             .padding(.top, 10)
@@ -65,7 +65,7 @@ struct MonitorView: View {
                         HStack(spacing: 10) {
                             // CPU Card
                             MetricCard(
-                                title: "CPU 负载",
+                                title: "CPU Load",
                                 value: String(format: "%.1f%%", sysMonitor.totalCPUUsage * 100),
                                 icon: "bolt.fill",
                                 color: .cyan,
@@ -75,7 +75,7 @@ struct MonitorView: View {
                             
                             // RAM Card
                             MetricCard(
-                                title: "内存 占用",
+                                title: "Memory Usage",
                                 value: String(format: "%.1f%%", sysMonitor.memoryData.usagePercentage * 100),
                                 icon: "memorychip",
                                 color: .purple,
@@ -84,14 +84,14 @@ struct MonitorView: View {
                             )
                         }
                         
-                        // Fan Speed Section - Aligned & Non-green
+                        // Fan Speed Section
                         if !sysMonitor.fanInfos.isEmpty {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Image(systemName: "fanblades.fill")
                                         .font(.system(size: 12))
                                         .foregroundColor(.secondary)
-                                    Text("风扇转速")
+                                    Text("Fan Speeds")
                                         .font(.system(size: 11, weight: .semibold))
                                         .foregroundColor(.secondary)
                                     Spacer()
@@ -118,7 +118,7 @@ struct MonitorView: View {
                                 Image(systemName: "fanblades")
                                     .font(.system(size: 11))
                                     .foregroundColor(.secondary)
-                                Text("散热系统: 无风扇静音架构 (Fanless)")
+                                Text("Cooling System: Fanless Architecture")
                                     .font(.system(size: 10, weight: .medium))
                                     .foregroundColor(.secondary)
                                 Spacer()
@@ -130,7 +130,7 @@ struct MonitorView: View {
                         
                         // Per-Core Grid
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("CPU 核心状态 (\(sysMonitor.coreUsages.count) 核心)")
+                            Text("CPU Cores (\(sysMonitor.coreUsages.count) Cores)")
                                 .font(.system(size: 11, weight: .semibold))
                                 .foregroundColor(.secondary)
                             
@@ -162,7 +162,7 @@ struct MonitorView: View {
                         // Memory Breakdown
                         VStack(alignment: .leading, spacing: 6) {
                             HStack {
-                                Text("内存使用分布")
+                                Text("Memory Distribution")
                                     .font(.system(size: 11, weight: .semibold))
                                     .foregroundColor(.secondary)
                                 Spacer()
@@ -191,12 +191,12 @@ struct MonitorView: View {
                             HStack(spacing: 8) {
                                 LegendItem(color: .blue, text: "App: \(sysMonitor.memoryData.formattedActive)")
                                 LegendItem(color: .orange, text: "Wired: \(sysMonitor.memoryData.formattedWired)")
-                                LegendItem(color: .purple, text: "压缩: \(sysMonitor.memoryData.formattedCompressed)")
+                                LegendItem(color: .purple, text: "Compressed: \(sysMonitor.memoryData.formattedCompressed)")
                             }
                             .font(.system(size: 9))
                             
                             if sysMonitor.memoryData.swapUsedBytes > 0 {
-                                Text("交换内存 (Swap): \(sysMonitor.memoryData.formattedSwap)")
+                                Text("Swap Memory: \(sysMonitor.memoryData.formattedSwap)")
                                     .font(.system(size: 9, weight: .medium))
                                     .foregroundColor(.yellow)
                             }
@@ -209,8 +209,8 @@ struct MonitorView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack {
                                     Picker("", selection: $selectedTab) {
-                                        Text("CPU 占用榜").tag(0)
-                                        Text("内存占用榜").tag(1)
+                                        Text("CPU Leaders").tag(0)
+                                        Text("RAM Leaders").tag(1)
                                     }
                                     .pickerStyle(.segmented)
                                     .labelsHidden()
@@ -245,7 +245,7 @@ struct MonitorView: View {
                                                 .foregroundColor(.red.opacity(0.7))
                                         }
                                         .buttonStyle(.plain)
-                                        .help("强行结束 PID \(item.id)")
+                                        .help("Force Terminate (PID \(item.id))")
                                     }
                                     .padding(.vertical, 2)
                                 }
@@ -260,7 +260,7 @@ struct MonitorView: View {
                         }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "macwindow")
-                                Text("打开 macOS 活动监视器")
+                                Text("Open Activity Monitor")
                             }
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.accentColor)
@@ -275,7 +275,7 @@ struct MonitorView: View {
                 }
             }
         }
-        .frame(width: 320, height: 420)
+        .frame(width: 320, height: 430)
         .onAppear {
             procManager.refreshProcesses()
         }
@@ -368,41 +368,32 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("偏好设置")
+                Text("Preferences")
                     .font(.system(size: 13, weight: .bold))
                 Spacer()
-                Button("完成") { showSettings = false }
+                Button("Done") { showSettings = false }
                     .font(.system(size: 11, weight: .semibold))
             }
             
             Divider()
             
-            VStack(alignment: .leading, spacing: 6) {
-                Text("任务栏文本精简风格")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
-                
-                Picker("", selection: $settings.labelFormatRaw) {
-                    ForEach(LabelFormatStyle.allCases) { style in
-                        Text(style.rawValue).tag(style.rawValue)
-                    }
-                }
-                .pickerStyle(.menu)
-            }
+            // Launch at Login Toggle
+            Toggle("Launch at Login", isOn: $settings.launchAtLogin)
+                .font(.system(size: 11, weight: .semibold))
             
             VStack(alignment: .leading, spacing: 6) {
-                Text("常驻顶部任务栏项目")
+                Text("Status Bar Items")
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.secondary)
                 
                 VStack(spacing: 6) {
-                    Toggle("CPU 占用率", isOn: $settings.showCPUInStatus)
+                    Toggle("CPU Usage", isOn: $settings.showCPUInStatus)
                         .font(.system(size: 11, weight: .medium))
                     
-                    Toggle("内存 占用率", isOn: $settings.showRAMInStatus)
+                    Toggle("Memory Usage", isOn: $settings.showRAMInStatus)
                         .font(.system(size: 11, weight: .medium))
                     
-                    Toggle("风扇 转速", isOn: $settings.showFanInStatus)
+                    Toggle("Fan Speed", isOn: $settings.showFanInStatus)
                         .font(.system(size: 11, weight: .medium))
                 }
                 .padding(8)
@@ -410,19 +401,19 @@ struct SettingsView: View {
             }
             
             VStack(alignment: .leading, spacing: 6) {
-                Text("采样刷新频率")
+                Text("Refresh Interval")
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.secondary)
                 
                 Picker("", selection: $settings.refreshInterval) {
-                    Text("1 秒 (高精度)").tag(1.0)
-                    Text("2 秒 (推荐)").tag(2.0)
-                    Text("5 秒 (极省电)").tag(5.0)
+                    Text("1s (High)").tag(1.0)
+                    Text("2s (Default)").tag(2.0)
+                    Text("5s (Energy Saver)").tag(5.0)
                 }
                 .pickerStyle(.segmented)
             }
             
-            Toggle("展示 Top 进程占用榜单", isOn: $settings.showTopProcesses)
+            Toggle("Show Top Processes Leaderboard", isOn: $settings.showTopProcesses)
                 .font(.system(size: 11, weight: .medium))
             
             Spacer()

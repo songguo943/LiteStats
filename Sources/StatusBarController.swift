@@ -51,20 +51,23 @@ struct ColumnView: View {
     }
 }
 
-final class StatusBarController {
+final class StatusBarController: NSObject, NSPopoverDelegate {
     private var statusItem: NSStatusItem
     private var popover: NSPopover
     private var hostingView: ClickableHostingView<StatusItemView>?
     private var eventMonitor: Any?
     private var cancellables = Set<AnyCancellable>()
+    private var pendingWidthUpdate: Bool = false
     
-    init() {
+    override init() {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.popover = NSPopover()
+        super.init()
         
         let contentView = MonitorView()
         self.popover.contentSize = NSSize(width: 320, height: 420)
         self.popover.behavior = .transient
+        self.popover.delegate = self
         self.popover.contentViewController = NSHostingController(rootView: contentView)
         
         setupCustomView()
@@ -94,11 +97,10 @@ final class StatusBarController {
         ])
         
         self.hostingView = hosting
-        updateStatusItemWidth()
+        updateStatusItemWidth(force: true)
     }
     
     private func setupSubscriptions() {
-        // Recalculate status item length when metrics or settings change
         Publishers.CombineLatest3(
             SystemMonitor.shared.$totalCPUUsage,
             SystemMonitor.shared.$memoryData,
@@ -122,12 +124,28 @@ final class StatusBarController {
         .store(in: &cancellables)
     }
     
-    private func updateStatusItemWidth() {
+    private func updateStatusItemWidth(force: Bool = false) {
         guard let hosting = hostingView else { return }
+        
+        // Defer statusItem length update while popover is open to prevent window jumping
+        if popover.isShown && !force {
+            pendingWidthUpdate = true
+            return
+        }
+        
         hosting.layoutSubtreeIfNeeded()
         let fittingWidth = hosting.fittingSize.width
         let finalWidth = max(fittingWidth, 20.0)
         statusItem.length = finalWidth
+    }
+    
+    func popoverWillClose(_ notification: Notification) {
+        if pendingWidthUpdate {
+            pendingWidthUpdate = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.updateStatusItemWidth(force: true)
+            }
+        }
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
