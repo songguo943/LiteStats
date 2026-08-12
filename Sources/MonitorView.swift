@@ -154,8 +154,11 @@ struct MonitorView: View {
                                             }
                                             
                                             VStack(alignment: .leading, spacing: 1) {
-                                                Text("\(fan.name): \(fan.rpm) RPM")
-                                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                                Text("\(fanLabel(id: fan.id, count: sysMonitor.fanInfos.count)):")
+                                                    .font(.system(size: 11, weight: .semibold))
+                                                    .foregroundColor(Color.white.opacity(0.9))
+                                                Text("\(fan.rpm) RPM")
+                                                    .font(.system(size: 12, weight: .bold, design: .monospaced))
                                                     .foregroundColor(.white)
                                                 Text(fan.rpm > 0 ? settings.l10n("Fan Active", "正常运转") : settings.l10n("Fan Silent", "静音停转"))
                                                     .font(.system(size: 9, weight: .medium))
@@ -330,6 +333,13 @@ struct MonitorView: View {
         .onAppear {
             procManager.refreshProcesses()
         }
+    }
+    
+    private func fanLabel(id: Int, count: Int) -> String {
+        if count == 1 {
+            return settings.l10n("CPU Fan", "CPU 风扇")
+        }
+        return id == 0 ? settings.l10n("Left Fan", "左风扇") : settings.l10n("Right Fan", "右风扇")
     }
     
     private func coreColor(_ usage: Double) -> Color {

@@ -19,8 +19,7 @@ public class SMCReader {
         for child in mirror.children {
             if idx >= Int(rawData.count) { break }
             if let fanItem = child.value as? SMCFanItem {
-                let name = rawData.count == 1 ? "CPU 风扇" : (idx == 0 ? "左风扇" : "右风扇")
-                fans.append(FanInfo(id: idx, name: name, rpm: Int(fanItem.rpm)))
+                fans.append(FanInfo(id: idx, name: "Fan \(idx + 1)", rpm: Int(fanItem.rpm)))
                 idx += 1
             }
         }
