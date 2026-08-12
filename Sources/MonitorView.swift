@@ -57,7 +57,6 @@ struct MonitorView: View {
             
             if showSettings {
                 SettingsView(showSettings: $showSettings)
-                    .padding(.horizontal, 12)
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 12) {
@@ -360,22 +359,27 @@ struct LegendItem: View {
     }
 }
 
-// MARK: - Settings View Inside Popover (Redesigned Full-Width Aligned Cards)
+// MARK: - Settings View Inside Popover (Redesigned Full-Width Aligned Cards & Padded Header)
 struct SettingsView: View {
     @Binding var showSettings: Bool
     @ObservedObject var settings = SettingsStore.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            // Header Bar
             HStack {
                 Text(settings.l10n("Preferences", "偏好设置"))
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.primary)
                 Spacer()
                 Button(settings.l10n("Done", "完成")) { showSettings = false }
                     .font(.system(size: 11, weight: .semibold))
             }
+            .padding(.horizontal, 4)
+            .padding(.top, 2)
             
             Divider()
+                .opacity(0.3)
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 10) {
@@ -462,6 +466,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
     }
 }
