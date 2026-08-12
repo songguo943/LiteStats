@@ -11,32 +11,32 @@ struct MonitorView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Top App Bar
+            // Header Bar
             HStack(spacing: 8) {
-                // App Logo Badge
+                // Logo Badge [L]
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.primary.opacity(0.12))
+                        .fill(LinearGradient(colors: [Color.cyan, Color.blue], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(width: 24, height: 24)
-                    Image(systemName: "cpu.fill")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.cyan)
+                    Text("L")
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
                 }
                 
                 Text("LiteStats")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundColor(.primary)
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
                 
                 Spacer()
                 
-                HStack(spacing: 12) {
+                HStack(spacing: 14) {
                     Button(action: {
                         sysMonitor.updateStats()
                         procManager.refreshProcesses()
                     }) {
                         Image(systemName: "arrow.clockwise")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color.white.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                     .help(settings.l10n("Refresh", "刷新"))
@@ -44,7 +44,7 @@ struct MonitorView: View {
                     Button(action: { showSettings.toggle() }) {
                         Image(systemName: "gearshape.fill")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(showSettings ? .accentColor : .secondary)
+                            .foregroundColor(showSettings ? .cyan : Color.white.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                     .help(settings.l10n("Preferences", "偏好设置"))
@@ -52,7 +52,7 @@ struct MonitorView: View {
                     Button(action: { NSApplication.shared.terminate(nil) }) {
                         Image(systemName: "power")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.red.opacity(0.85))
+                            .foregroundColor(Color.red.opacity(0.85))
                     }
                     .buttonStyle(.plain)
                     .help(settings.l10n("Quit App", "退出程序"))
@@ -63,39 +63,41 @@ struct MonitorView: View {
             .padding(.bottom, 10)
             
             Divider()
-                .opacity(0.2)
+                .background(Color.white.opacity(0.12))
             
             if showSettings {
                 SettingsView(showSettings: $showSettings)
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 10) {
-                        // Overview Cards (CPU Load & Memory Usage)
+                        // Overview Cards
                         HStack(spacing: 10) {
-                            MetricCard(
+                            DarkMetricCard(
                                 title: settings.l10n("CPU Load", "CPU 负载"),
                                 value: String(format: "%.1f%%", sysMonitor.totalCPUUsage * 100),
                                 icon: "bolt.fill",
                                 color: .cyan,
+                                gradientColors: [Color.cyan, Color.orange],
                                 subtitle: nil,
                                 history: sysMonitor.cpuHistory
                             )
                             
-                            MetricCard(
+                            DarkMetricCard(
                                 title: settings.l10n("Memory Usage", "内存 占用"),
                                 value: String(format: "%.1f%%", sysMonitor.memoryData.usagePercentage * 100),
                                 icon: "memorychip.fill",
                                 color: .purple,
+                                gradientColors: [Color.blue, Color.purple],
                                 subtitle: "\(sysMonitor.memoryData.formattedUsed) / \(sysMonitor.memoryData.formattedTotal)",
                                 history: sysMonitor.ramHistory
                             )
                         }
                         
-                        // Per-Core CPU Usage Card
+                        // Per Core Grid Card
                         VStack(alignment: .leading, spacing: 8) {
                             Text(settings.l10n("CPU Per-Core Usage", "CPU 核心负载分布"))
                                 .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(Color.white.opacity(0.7))
                             
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
                                 ForEach(sysMonitor.coreUsages) { core in
@@ -103,7 +105,7 @@ struct MonitorView: View {
                                         HStack {
                                             Text("C\(core.id)")
                                                 .font(.system(size: 9, weight: .bold, design: .monospaced))
-                                                .foregroundColor(.secondary)
+                                                .foregroundColor(Color.white.opacity(0.5))
                                             Spacer()
                                             Text(String(format: "%.0f%%", core.usage * 100))
                                                 .font(.system(size: 9, weight: .semibold, design: .monospaced))
@@ -113,23 +115,19 @@ struct MonitorView: View {
                                         GeometryReader { geo in
                                             ZStack(alignment: .leading) {
                                                 Capsule()
-                                                    .fill(Color.primary.opacity(0.1))
+                                                    .fill(Color.white.opacity(0.1))
                                                 Capsule()
                                                     .fill(coreColor(core.usage))
                                                     .frame(width: geo.size.width * CGFloat(core.usage))
                                             }
                                         }
-                                        .frame(height: 5)
+                                        .frame(height: 4)
                                     }
                                 }
                             }
                         }
                         .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.primary.opacity(0.04))
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-                        )
+                        .background(DarkCardBackground())
                         
                         // Fan Speeds Card
                         if !sysMonitor.fanInfos.isEmpty {
@@ -137,32 +135,32 @@ struct MonitorView: View {
                                 HStack {
                                     Image(systemName: "fanblades.fill")
                                         .font(.system(size: 12))
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(Color.white.opacity(0.7))
                                     Text(settings.l10n("Fan Speeds", "风扇转速"))
                                         .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(Color.white.opacity(0.7))
                                     Spacer()
                                 }
                                 
-                                HStack(spacing: 12) {
+                                HStack(spacing: 14) {
                                     ForEach(sysMonitor.fanInfos) { fan in
                                         HStack(spacing: 8) {
                                             ZStack {
                                                 Circle()
-                                                    .fill(Color.primary.opacity(0.08))
+                                                    .fill(Color.white.opacity(0.08))
                                                     .frame(width: 26, height: 26)
                                                 Image(systemName: "fanblades")
-                                                    .font(.system(size: 13))
-                                                    .foregroundColor(.accentColor)
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(.cyan)
                                             }
                                             
                                             VStack(alignment: .leading, spacing: 1) {
                                                 Text(fan.name)
                                                     .font(.system(size: 10, weight: .medium))
-                                                    .foregroundColor(.secondary)
+                                                    .foregroundColor(Color.white.opacity(0.6))
                                                 Text("\(fan.rpm) RPM")
                                                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                                                    .foregroundColor(.primary)
+                                                    .foregroundColor(.white)
                                             }
                                         }
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -170,38 +168,34 @@ struct MonitorView: View {
                                 }
                             }
                             .padding(12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.primary.opacity(0.04))
-                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-                            )
+                            .background(DarkCardBackground())
                         } else {
                             HStack(spacing: 6) {
                                 Image(systemName: "fanblades")
                                     .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color.white.opacity(0.6))
                                 Text(settings.l10n("Cooling System: Fanless", "散热系统: 无风扇静音架构"))
                                     .font(.system(size: 10, weight: .medium))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color.white.opacity(0.6))
                                 Spacer()
                             }
                             .padding(10)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.03)))
+                            .background(DarkCardBackground())
                         }
                         
                         // Memory Breakdown Card
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(settings.l10n("Memory Breakdown", "内存分布"))
+                                Text(settings.l10n("Memory Breakdown", "内存使用分布"))
                                     .font(.system(size: 11, weight: .bold))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color.white.opacity(0.7))
                                 Spacer()
                                 Text(String(format: "%.1f%% used", sysMonitor.memoryData.usagePercentage * 100))
                                     .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(Color.white.opacity(0.5))
                             }
                             
-                            // Segmented Bar
+                            // Multi-color Segmented Bar
                             GeometryReader { geo in
                                 HStack(spacing: 2) {
                                     let total = Double(max(sysMonitor.memoryData.totalBytes, 1))
@@ -214,14 +208,14 @@ struct MonitorView: View {
                                     Capsule().fill(Color.purple).frame(width: max(compW, 0))
                                 }
                                 .clipShape(Capsule())
-                                .background(Capsule().fill(Color.primary.opacity(0.1)))
+                                .background(Capsule().fill(Color.white.opacity(0.1)))
                             }
                             .frame(height: 8)
                             
                             HStack(spacing: 12) {
                                 LegendItem(color: .blue, text: "App: \(sysMonitor.memoryData.formattedActive)")
                                 LegendItem(color: .orange, text: "Wired: \(sysMonitor.memoryData.formattedWired)")
-                                LegendItem(color: .purple, text: "Compressed: \(sysMonitor.memoryData.formattedCompressed)")
+                                LegendItem(color: .purple, text: "Comp: \(sysMonitor.memoryData.formattedCompressed)")
                             }
                             .font(.system(size: 9))
                             
@@ -232,11 +226,7 @@ struct MonitorView: View {
                             }
                         }
                         .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.primary.opacity(0.04))
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-                        )
+                        .background(DarkCardBackground())
                         
                         // Top Processes Section
                         if settings.showTopProcesses {
@@ -259,11 +249,12 @@ struct MonitorView: View {
                                         } else {
                                             Image(systemName: "app.fill")
                                                 .font(.system(size: 11))
-                                                .foregroundColor(.secondary)
+                                                .foregroundColor(Color.white.opacity(0.5))
                                         }
                                         
                                         Text(item.name)
                                             .font(.system(size: 11, weight: .medium))
+                                            .foregroundColor(.white)
                                             .lineLimit(1)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         
@@ -274,7 +265,7 @@ struct MonitorView: View {
                                         Button(action: { procManager.killProcess(pid: item.id) }) {
                                             Image(systemName: "xmark.circle.fill")
                                                 .font(.system(size: 12))
-                                                .foregroundColor(.red.opacity(0.75))
+                                                .foregroundColor(Color.red.opacity(0.75))
                                         }
                                         .buttonStyle(.plain)
                                         .help(settings.l10n("Force Terminate (PID \(item.id))", "强行结束 (PID \(item.id))"))
@@ -283,14 +274,10 @@ struct MonitorView: View {
                                 }
                             }
                             .padding(12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.primary.opacity(0.04))
-                                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-                            )
+                            .background(DarkCardBackground())
                         }
                         
-                        // Footer Action Button
+                        // Footer Quick Launch
                         Button(action: {
                             NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Activity Monitor.app"))
                         }) {
@@ -299,13 +286,13 @@ struct MonitorView: View {
                                 Text(settings.l10n("Open Activity Monitor", "打开 Activity Monitor"))
                             }
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(.cyan)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.accentColor.opacity(0.08))
-                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor.opacity(0.3), lineWidth: 1))
+                                    .fill(Color.cyan.opacity(0.1))
+                                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.cyan.opacity(0.3), lineWidth: 1))
                             )
                         }
                         .buttonStyle(.plain)
@@ -315,7 +302,8 @@ struct MonitorView: View {
                 }
             }
         }
-        .frame(width: 325, height: 455)
+        .frame(width: 330, height: 480)
+        .preferredColorScheme(.dark)
         .onAppear {
             procManager.refreshProcesses()
         }
@@ -328,55 +316,63 @@ struct MonitorView: View {
     }
 }
 
-// MARK: - Metric Card (With Gradient Lines & Subtitles)
-struct MetricCard: View {
+// MARK: - Dark Card Background Helper
+struct DarkCardBackground: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color(white: 0.12, opacity: 0.85))
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.1), lineWidth: 1))
+    }
+}
+
+// MARK: - Dark Metric Card with Multi-Color Gradient Lines
+struct DarkMetricCard: View {
     let title: String
     let value: String
     let icon: String
     let color: Color
+    let gradientColors: [Color]
     let subtitle: String?
     let history: [Double]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Image(systemName: icon)
                     .foregroundColor(color)
                     .font(.system(size: 12, weight: .bold))
                 Text(title)
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.white.opacity(0.7))
                 Spacer()
             }
             
             Text(value)
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(.primary)
+                .foregroundColor(.white)
             
             if let sub = subtitle {
                 Text(sub)
                     .font(.system(size: 9, weight: .medium, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.white.opacity(0.5))
+            } else {
+                Spacer().frame(height: 11)
             }
             
-            // Mini Sparkline Graph with Area Gradient
-            SparklineView(data: history, color: color)
+            // Sparkline Graph
+            GradientSparklineView(data: history, colors: gradientColors)
                 .frame(height: 28)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.primary.opacity(0.04))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-        )
+        .background(DarkCardBackground())
     }
 }
 
-// MARK: - Sparkline Chart with Smooth Line & Filled Area
-struct SparklineView: View {
+// MARK: - Gradient Sparkline View
+struct GradientSparklineView: View {
     let data: [Double]
-    let color: Color
+    let colors: [Color]
     
     var body: some View {
         GeometryReader { geo in
@@ -396,7 +392,7 @@ struct SparklineView: View {
                     }
                     .fill(
                         LinearGradient(
-                            colors: [color.opacity(0.25), color.opacity(0.02)],
+                            colors: [(colors.first ?? .cyan).opacity(0.3), (colors.last ?? .blue).opacity(0.02)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -415,7 +411,10 @@ struct SparklineView: View {
                             }
                         }
                     }
-                    .stroke(color, style: StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
+                    .stroke(
+                        LinearGradient(colors: colors, startPoint: .leading, endPoint: .trailing),
+                        style: StrokeStyle(lineWidth: 2.0, lineCap: .round, lineJoin: .round)
+                    )
                 }
             }
         }
@@ -430,12 +429,12 @@ struct LegendItem: View {
     var body: some View {
         HStack(spacing: 4) {
             Circle().fill(color).frame(width: 6, height: 6)
-            Text(text).foregroundColor(.secondary)
+            Text(text).foregroundColor(Color.white.opacity(0.7))
         }
     }
 }
 
-// MARK: - Settings View (Redesigned Glass Cards & Icon Badges)
+// MARK: - Settings View (Dark Glass Theme)
 struct SettingsView: View {
     @Binding var showSettings: Bool
     @ObservedObject var settings = SettingsStore.shared
@@ -446,13 +445,13 @@ struct SettingsView: View {
             HStack {
                 Text(settings.l10n("Preferences", "偏好设置"))
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                 Spacer()
                 Button(action: { showSettings = false }) {
                     Text(settings.l10n("Done", "完成"))
                         .font(.system(size: 11, weight: .bold))
                         .foregroundColor(.white)
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 14)
                         .padding(.vertical, 4)
                         .background(Capsule().fill(Color.accentColor))
                 }
@@ -462,12 +461,12 @@ struct SettingsView: View {
             .padding(.top, 2)
             
             Divider()
-                .opacity(0.3)
+                .background(Color.white.opacity(0.12))
             
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 10) {
                     // Language Selector Card
-                    SettingsCard(icon: "globe", title: settings.l10n("Language", "显示语言")) {
+                    DarkSettingsCard(icon: "globe", title: settings.l10n("Language", "显示语言")) {
                         Picker("", selection: $settings.appLanguageRaw) {
                             ForEach(AppLanguage.allCases) { lang in
                                 Text(lang.rawValue).tag(lang.rawValue)
@@ -477,27 +476,31 @@ struct SettingsView: View {
                     }
                     
                     // Startup Card
-                    SettingsCard(icon: "rocket.fill", title: settings.l10n("Startup", "启动设置")) {
+                    DarkSettingsCard(icon: "rocket.fill", title: settings.l10n("Startup", "启动设置")) {
                         Toggle(settings.l10n("Launch at Login", "开机自动启动"), isOn: $settings.launchAtLogin)
                             .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.white)
                     }
                     
                     // Status Bar Items Card
-                    SettingsCard(icon: "chart.bar.fill", title: settings.l10n("Status Bar Items", "任务栏常驻项目")) {
+                    DarkSettingsCard(icon: "chart.bar.fill", title: settings.l10n("Status Bar Items", "任务栏常驻项目")) {
                         VStack(alignment: .leading, spacing: 6) {
                             Toggle(settings.l10n("CPU Usage", "CPU 占用率"), isOn: $settings.showCPUInStatus)
                                 .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.white)
                             
                             Toggle(settings.l10n("Memory Usage", "内存 占用率"), isOn: $settings.showRAMInStatus)
                                 .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.white)
                             
                             Toggle(settings.l10n("Fan Speed", "风扇 转速"), isOn: $settings.showFanInStatus)
                                 .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.white)
                         }
                     }
                     
                     // Refresh Rate Card
-                    SettingsCard(icon: "timer", title: settings.l10n("Refresh Interval", "采样刷新频率")) {
+                    DarkSettingsCard(icon: "timer", title: settings.l10n("Refresh Interval", "采样刷新频率")) {
                         Picker("", selection: $settings.refreshInterval) {
                             Text(settings.l10n("1s (High)", "1秒 (高精度)")).tag(1.0)
                             Text(settings.l10n("2s (Default)", "2秒 (推荐)")).tag(2.0)
@@ -507,9 +510,10 @@ struct SettingsView: View {
                     }
                     
                     // Top Processes Card
-                    SettingsCard(icon: "sparkles", title: settings.l10n("Features", "高级功能")) {
+                    DarkSettingsCard(icon: "sparkles", title: settings.l10n("Features", "高级功能")) {
                         Toggle(settings.l10n("Show Top Processes Leaderboard", "展示 Top 进程占用榜单"), isOn: $settings.showTopProcesses)
                             .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.white)
                     }
                 }
             }
@@ -519,8 +523,8 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Reusable Settings Card Container with Icon Badge
-struct SettingsCard<Content: View>: View {
+// MARK: - Dark Settings Card
+struct DarkSettingsCard<Content: View>: View {
     let icon: String
     let title: String
     let content: Content
@@ -534,22 +538,18 @@ struct SettingsCard<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.accentColor)
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 6))
+                    .foregroundColor(.cyan)
                 Text(title)
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color.white.opacity(0.7))
             }
             
             content
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.primary.opacity(0.04))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.06), lineWidth: 1))
-        )
+        .background(DarkCardBackground())
     }
 }
