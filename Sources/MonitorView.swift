@@ -6,17 +6,16 @@ struct MonitorView: View {
     @ObservedObject var procManager = ProcessManager.shared
     @ObservedObject var settings = SettingsStore.shared
     
-    @State private var selectedTab: Int = 0 // 0: CPU, 1: RAM
     @State private var showSettings: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
             // Header Bar
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 // Logo Badge [L]
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(LinearGradient(colors: [Color.cyan, Color.blue], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .fill(Color(white: 0.2))
                         .frame(width: 24, height: 24)
                     Text("L")
                         .font(.system(size: 14, weight: .black, design: .rounded))
@@ -29,7 +28,7 @@ struct MonitorView: View {
                 
                 Spacer()
                 
-                HStack(spacing: 14) {
+                HStack(spacing: 12) {
                     Button(action: {
                         sysMonitor.updateStats()
                         procManager.refreshProcesses()
@@ -70,14 +69,14 @@ struct MonitorView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 10) {
-                        // Overview Cards
+                        // Overview Cards (CPU Load & Memory Usage)
                         HStack(spacing: 10) {
                             DarkMetricCard(
                                 title: settings.l10n("CPU Load", "CPU 负载"),
                                 value: String(format: "%.1f%%", sysMonitor.totalCPUUsage * 100),
                                 icon: "bolt.fill",
                                 color: .cyan,
-                                gradientColors: [Color.cyan, Color.orange],
+                                gradientColors: [Color.orange, Color.red],
                                 subtitle: nil,
                                 history: sysMonitor.cpuHistory
                             )
@@ -86,8 +85,8 @@ struct MonitorView: View {
                                 title: settings.l10n("Memory Usage", "内存 占用"),
                                 value: String(format: "%.1f%%", sysMonitor.memoryData.usagePercentage * 100),
                                 icon: "memorychip.fill",
-                                color: .purple,
-                                gradientColors: [Color.blue, Color.purple],
+                                color: .blue,
+                                gradientColors: [Color.blue, Color.cyan],
                                 subtitle: "\(sysMonitor.memoryData.formattedUsed) / \(sysMonitor.memoryData.formattedTotal)",
                                 history: sysMonitor.ramHistory
                             )
@@ -142,25 +141,25 @@ struct MonitorView: View {
                                     Spacer()
                                 }
                                 
-                                HStack(spacing: 14) {
+                                HStack(spacing: 12) {
                                     ForEach(sysMonitor.fanInfos) { fan in
                                         HStack(spacing: 8) {
                                             ZStack {
                                                 Circle()
                                                     .fill(Color.white.opacity(0.08))
-                                                    .frame(width: 26, height: 26)
+                                                    .frame(width: 28, height: 28)
                                                 Image(systemName: "fanblades")
-                                                    .font(.system(size: 12))
-                                                    .foregroundColor(.cyan)
+                                                    .font(.system(size: 13))
+                                                    .foregroundColor(.white)
                                             }
                                             
                                             VStack(alignment: .leading, spacing: 1) {
-                                                Text(fan.name)
-                                                    .font(.system(size: 10, weight: .medium))
-                                                    .foregroundColor(Color.white.opacity(0.6))
-                                                Text("\(fan.rpm) RPM")
-                                                    .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                                Text("\(fan.name): \(fan.rpm) RPM")
+                                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                                                     .foregroundColor(.white)
+                                                Text(fan.rpm > 0 ? settings.l10n("Fan Active", "正常运转") : settings.l10n("Fan Silent", "静音停转"))
+                                                    .font(.system(size: 9, weight: .medium))
+                                                    .foregroundColor(Color.white.opacity(0.5))
                                             }
                                         }
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -186,7 +185,7 @@ struct MonitorView: View {
                         // Memory Breakdown Card
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(settings.l10n("Memory Breakdown", "内存使用分布"))
+                                Text(settings.l10n("Memory Breakdown", "内存分布"))
                                     .font(.system(size: 11, weight: .bold))
                                     .foregroundColor(Color.white.opacity(0.7))
                                 Spacer()
@@ -195,7 +194,7 @@ struct MonitorView: View {
                                     .foregroundColor(Color.white.opacity(0.5))
                             }
                             
-                            // Multi-color Segmented Bar
+                            // Multi-color Segmented Bar (Green / Orange / Purple)
                             GeometryReader { geo in
                                 HStack(spacing: 2) {
                                     let total = Double(max(sysMonitor.memoryData.totalBytes, 1))
@@ -203,9 +202,9 @@ struct MonitorView: View {
                                     let wiredW = CGFloat(Double(sysMonitor.memoryData.wiredBytes) / total) * geo.size.width
                                     let compW = CGFloat(Double(sysMonitor.memoryData.compressedBytes) / total) * geo.size.width
                                     
-                                    Capsule().fill(Color.blue).frame(width: max(activeW, 0))
-                                    Capsule().fill(Color.orange).frame(width: max(wiredW, 0))
-                                    Capsule().fill(Color.purple).frame(width: max(compW, 0))
+                                    Capsule().fill(Color(red: 0.2, green: 0.78, blue: 0.35)).frame(width: max(activeW, 0))
+                                    Capsule().fill(Color(red: 1.0, green: 0.58, blue: 0.0)).frame(width: max(wiredW, 0))
+                                    Capsule().fill(Color(red: 0.69, green: 0.32, blue: 0.87)).frame(width: max(compW, 0))
                                 }
                                 .clipShape(Capsule())
                                 .background(Capsule().fill(Color.white.opacity(0.1)))
@@ -213,9 +212,9 @@ struct MonitorView: View {
                             .frame(height: 8)
                             
                             HStack(spacing: 12) {
-                                LegendItem(color: .blue, text: "App: \(sysMonitor.memoryData.formattedActive)")
-                                LegendItem(color: .orange, text: "Wired: \(sysMonitor.memoryData.formattedWired)")
-                                LegendItem(color: .purple, text: "Comp: \(sysMonitor.memoryData.formattedCompressed)")
+                                LegendItem(color: Color(red: 0.2, green: 0.78, blue: 0.35), text: settings.l10n("App Memory", "App 内存"))
+                                LegendItem(color: Color(red: 1.0, green: 0.58, blue: 0.0), text: settings.l10n("Wired", "紧致内存"))
+                                LegendItem(color: Color(red: 0.69, green: 0.32, blue: 0.87), text: settings.l10n("Compressed", "已压缩"))
                             }
                             .font(.system(size: 9))
                             
@@ -228,53 +227,77 @@ struct MonitorView: View {
                         .padding(12)
                         .background(DarkCardBackground())
                         
-                        // Top Processes Section
+                        // Dual-Column Top Processes Section (CPU & RAM Side-by-Side)
                         if settings.showTopProcesses {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Picker("", selection: $selectedTab) {
-                                    Text(settings.l10n("CPU Leaders", "CPU 占用榜")).tag(0)
-                                    Text(settings.l10n("RAM Leaders", "内存占用榜")).tag(1)
-                                }
-                                .pickerStyle(.segmented)
-                                .labelsHidden()
-                                
-                                let processes = selectedTab == 0 ? procManager.topCPUProcesses : procManager.topRAMProcesses
-                                
-                                ForEach(processes) { item in
-                                    HStack(spacing: 8) {
-                                        if let icon = item.icon {
-                                            Image(nsImage: icon)
-                                                .resizable()
-                                                .frame(width: 16, height: 16)
-                                        } else {
-                                            Image(systemName: "app.fill")
-                                                .font(.system(size: 11))
-                                                .foregroundColor(Color.white.opacity(0.5))
+                            HStack(alignment: .top, spacing: 10) {
+                                // CPU Processes Column
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(settings.l10n("CPU Processes", "CPU 资源占用"))
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                    
+                                    ForEach(Array(procManager.topCPUProcesses.prefix(3))) { item in
+                                        HStack(spacing: 4) {
+                                            if let icon = item.icon {
+                                                Image(nsImage: icon)
+                                                    .resizable()
+                                                    .frame(width: 14, height: 14)
+                                            } else {
+                                                Image(systemName: "app.fill")
+                                                    .font(.system(size: 10))
+                                                    .foregroundColor(Color.white.opacity(0.5))
+                                            }
+                                            
+                                            Text(item.name)
+                                                .font(.system(size: 10, weight: .medium))
+                                                .foregroundColor(.white)
+                                                .lineLimit(1)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            Text(String(format: "%.1f%%", item.cpuUsagePercentage))
+                                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                                .foregroundColor(.cyan)
                                         }
-                                        
-                                        Text(item.name)
-                                            .font(.system(size: 11, weight: .medium))
-                                            .foregroundColor(.white)
-                                            .lineLimit(1)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                        
-                                        Text(selectedTab == 0 ? String(format: "%.1f%%", item.cpuUsagePercentage) : item.formattedMemory)
-                                            .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                            .foregroundColor(selectedTab == 0 ? .cyan : .purple)
-                                        
-                                        Button(action: { procManager.killProcess(pid: item.id) }) {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(Color.red.opacity(0.75))
-                                        }
-                                        .buttonStyle(.plain)
-                                        .help(settings.l10n("Force Terminate (PID \(item.id))", "强行结束 (PID \(item.id))"))
                                     }
-                                    .padding(.vertical, 2)
                                 }
+                                .padding(10)
+                                .frame(maxWidth: .infinity)
+                                .background(DarkCardBackground())
+                                
+                                // RAM Processes Column
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(settings.l10n("Memory Processes", "内存 资源占用"))
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                    
+                                    ForEach(Array(procManager.topRAMProcesses.prefix(3))) { item in
+                                        HStack(spacing: 4) {
+                                            if let icon = item.icon {
+                                                Image(nsImage: icon)
+                                                    .resizable()
+                                                    .frame(width: 14, height: 14)
+                                            } else {
+                                                Image(systemName: "app.fill")
+                                                    .font(.system(size: 10))
+                                                    .foregroundColor(Color.white.opacity(0.5))
+                                            }
+                                            
+                                            Text(item.name)
+                                                .font(.system(size: 10, weight: .medium))
+                                                .foregroundColor(.white)
+                                                .lineLimit(1)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            Text(item.formattedMemory)
+                                                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                                                .foregroundColor(.purple)
+                                        }
+                                    }
+                                }
+                                .padding(10)
+                                .frame(maxWidth: .infinity)
+                                .background(DarkCardBackground())
                             }
-                            .padding(12)
-                            .background(DarkCardBackground())
                         }
                         
                         // Footer Quick Launch
@@ -302,7 +325,7 @@ struct MonitorView: View {
                 }
             }
         }
-        .frame(width: 330, height: 480)
+        .frame(width: 340, height: 500)
         .preferredColorScheme(.dark)
         .onAppear {
             procManager.refreshProcesses()
@@ -348,7 +371,7 @@ struct DarkMetricCard: View {
             }
             
             Text(value)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
             
             if let sub = subtitle {
@@ -361,7 +384,7 @@ struct DarkMetricCard: View {
             
             // Sparkline Graph
             GradientSparklineView(data: history, colors: gradientColors)
-                .frame(height: 28)
+                .frame(height: 32)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -453,7 +476,7 @@ struct SettingsView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 4)
-                        .background(Capsule().fill(Color.accentColor))
+                        .background(Capsule().fill(Color.blue))
                 }
                 .buttonStyle(.plain)
             }
@@ -538,8 +561,8 @@ struct DarkSettingsCard<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                Image(systemName: "circle.fill")
-                    .font(.system(size: 6))
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.cyan)
                 Text(title)
                     .font(.system(size: 11, weight: .bold))
