@@ -302,10 +302,17 @@ struct MonitorView: View {
     }
     
     private func coreColor(_ index: Int, _ usage: Double) -> Color {
-        if usage > 0.75 { return .red }
-        let palette: [Color] = [.orange, .green, .cyan, .purple, .blue, .yellow]
-        return palette[index % palette.count]
+        if usage >= 0.75 {
+            return Color(red: 1.00, green: 0.35, blue: 0.35) // Heavy Load: Vibrant Coral Red
+        } else if usage >= 0.40 {
+            return Color(red: 1.00, green: 0.65, blue: 0.15) // Medium Load: Warm Amber Orange
+        } else if usage >= 0.15 {
+            return Color(red: 0.00, green: 0.78, blue: 0.92) // Active Load: Crisp Cyan
+        } else {
+            return Color(red: 0.35, green: 0.58, blue: 0.75) // Idle Load: Soft Steel Blue
+        }
     }
+
 }
 
 // MARK: - Dark Card Background Helper
