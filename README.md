@@ -11,6 +11,21 @@
 
 ---
 
+## 📊 Performance Benchmarks — Why LiteStats?
+
+**This is the whole point of LiteStats.** Sampled over 10 minutes (120 consecutive real-time samples) on an M-Series MacBook Pro:
+
+| Metric | LiteStats | Electron Alternatives | Advantage |
+| :--- | :--- | :--- | :--- |
+| **App Bundle Size** | **656 KB** | ~150 MB - 300 MB | 🟢 **99.6% smaller** |
+| **Memory Footprint (RSS)** | **37 MB** | ~150 MB - 350 MB | 🟢 **80%+ less RAM** |
+| **Idle CPU Usage** | **0.0%** | ~2.0% - 5.0% | 🟢 **Zero background drain** |
+| **Power Score** | **0.0** | ~15.0 - 30.0 | 🟢 **Zero battery impact** |
+
+*"Electron Alternatives" reflects the general resource footprint typically reported for Electron/Webview-based menu bar utilities, not a specific named competitor.*
+
+---
+
 ## 📸 Screenshots & Showcase
 
 <p align="center">
@@ -50,19 +65,6 @@ On macOS, system monitoring tools like Stats, iStat Menus, or Electron-based wid
 
 3. **Pure Native Performance**
    - Powered by Swift 6, Mach Kernel C APIs (`host_processor_info` / `host_statistics64`), and IOKit AppleSMC. Zero third-party dependencies.
-
----
-
-## 📊 Performance Benchmarks
-
-Sampled over 10 minutes (120 consecutive real-time samples) on an M-Series MacBook Pro:
-
-| Metric | LiteStats | Electron Alternatives | Advantage |
-| :--- | :--- | :--- | :--- |
-| **App Bundle Size** | **656 KB** | ~150 MB - 300 MB | 🟢 **99.6% smaller** |
-| **Memory Footprint (RSS)** | **37 MB** | ~150 MB - 350 MB | 🟢 **80%+ less RAM** |
-| **Idle CPU Usage** | **0.0%** | ~2.0% - 5.0% | 🟢 **Zero background drain** |
-| **Power Score** | **0.0** | ~15.0 - 30.0 | 🟢 **Zero battery impact** |
 
 ---
 
